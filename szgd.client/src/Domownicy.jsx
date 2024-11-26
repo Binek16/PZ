@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+    Alert,
     Box,
     Button,
     Dialog,
@@ -29,6 +30,7 @@ import Tooltip from '@mui/material/Tooltip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import ZmienUprawnieniaDomownikaModal from "@/ZmienUprawnieniaDomownika.jsx";
 import API_URLS from "@/API_URLS.jsx";
+import WarningIcon from '@mui/icons-material/Warning';
 /**
  * Component for managing household members ("Domownicy") within a selected "Gospodarstwo" (household).
  * Allows viewing, editing, and deleting members.
@@ -196,7 +198,21 @@ const Domownicy = () => {
 
     return (
         <Box>
-        {user && gospodarstwo && gospodarstwo.id ? (<Box sx={{ width: '100%' }}>
+        {!domownikWGospodarstwie?.czyWidziDomownikow ? <Alert
+            severity="error"
+            icon={<WarningIcon />}
+            sx={{
+                backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                color: 'red',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 2,
+                borderRadius: '8px',
+            }}
+        >
+            <Typography>Nie masz uprawnień do przeglądania domownikow.</Typography>
+        </Alert> : (user && gospodarstwo && gospodarstwo.id) ? (<Box sx={{ width: '100%' }}>
             {/*<Home sx={{ marginRight: 2 }} /> /!* Ikona domu *!/*/}
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
                 {/*Gospodarstwo: {gospodarstwoName || "Nie wybrano gospodarstwa"}*/}
@@ -254,24 +270,17 @@ const Domownicy = () => {
                                 </TableCell>
                                 {domownikWGospodarstwie?.czyMozeModyfikowacDomownikow && (
                                     <TableCell>
-                                        {domownik.id === user.userdata.id && <Box><Button
-                                            onClick={() => handleEditOpen(domownik)}
+                                        {domownik.id === user.userdata.id && <Box>
+                                            </Box>}
+                                        <Button
+                                            onClick={() => handleEditOpenZmienUprawnienia(domownik)}
                                             startIcon={<EditIcon/>}
                                             variant="outlined"
                                             color="primary"
                                             sx={{marginRight: 1}}
                                         >
-                                            Edytuj
+                                            Zmien Uprawnienia
                                         </Button>
-                                            <Button
-                                            onClick={() => handleEditOpenZmienUprawnienia(domownik)}
-                                        startIcon={<EditIcon/>}
-                                        variant="outlined"
-                                        color="primary"
-                                        sx={{marginRight: 1}}
-                                    >
-                                        Zmien Uprawnienia
-                                    </Button></Box>}
                                         <Button
                                             onClick={() => handleDelete(domownik.id)}
                                             startIcon={<DeleteIcon />}
